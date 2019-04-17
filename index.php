@@ -96,7 +96,6 @@
 	}
 
 	function onkoSunnuntai($db) {
-
 		$sunnuntai2101 = 1516557600;
 		$erotus = time() - $sunnuntai2101;
 		$jj = $erotus % 604800;
