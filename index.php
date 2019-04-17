@@ -12,31 +12,29 @@
     $omaSivu = "display: none;";
     
     if(isset($_SESSION['id'])) {
+			$kirjautuminen = "display: none;";
+			$omaSivu = "display: table;";
 
-        $kirjautuminen = "display: none;";
-        $omaSivu = "display: table;";
+			haeTiedot($_SESSION['id'], $db);
 
-        haeTiedot($_SESSION['id'], $db);
-
-        if($_SESSION['oikeus']){
-            if($_SESSION['sunnuntai'] == "sunnuntai") {
-                $nappiteksti = "Ei peliä tänään";
-                $nappivari = "style = 'background-color: red';";
-                header("Location: tauko.php");
-            } else {
-                $nappiteksti = "Pelaa päivän peli";
-                $nappivari = "style = 'background-color: green';";
-                $_SESSION['oljenkorret'][0] = "<button class='oljenkorsi' id='korsi1' onclick='poistaKaksi(this)'>Poista kaksi</button>";
-                $_SESSION['oljenkorret'][1] = "<button class='oljenkorsi' id='korsi2' onclick='poistaKaksi(this)'>Poista kaksi</button>";
-                $_SESSION['oljenkorret'][2] = "<button class='oljenkorsi' id='korsi3' onclick='ohita(this)'>Ohita</button>";
-                $_SESSION['oljenkorret'][3] = "<button class='oljenkorsi' id='korsi4' onclick='lisaa20(this)'>+20 sekuntia</button>";
-                $_SESSION['oljenkorret'][4] = "<button class='oljenkorsi' id='korsi5' onclick='lisaa30(this)'>+30sek ja haku</button>";
-            }
-        } else {
-            $nappiteksti = "Ei peliä tänään";
-            $nappivari = "style = 'background-color: red';";
-        }
-
+			if($_SESSION['oikeus']){
+				if($_SESSION['sunnuntai'] == "sunnuntai") {
+					$nappiteksti = "Ei peliä tänään";
+					$nappivari = "style = 'background-color: red';";
+					header("Location: tauko.php");
+				} else {
+					$nappiteksti = "Pelaa päivän peli";
+					$nappivari = "style = 'background-color: green';";
+					$_SESSION['oljenkorret'][0] = "<button class='oljenkorsi' id='korsi1' onclick='poistaKaksi(this)'>Poista kaksi</button>";
+					$_SESSION['oljenkorret'][1] = "<button class='oljenkorsi' id='korsi2' onclick='poistaKaksi(this)'>Poista kaksi</button>";
+					$_SESSION['oljenkorret'][2] = "<button class='oljenkorsi' id='korsi3' onclick='ohita(this)'>Ohita</button>";
+					$_SESSION['oljenkorret'][3] = "<button class='oljenkorsi' id='korsi4' onclick='lisaa20(this)'>+20 sekuntia</button>";
+					$_SESSION['oljenkorret'][4] = "<button class='oljenkorsi' id='korsi5' onclick='lisaa30(this)'>+30sek ja haku</button>";
+				}
+			} else {
+				$nappiteksti = "Ei peliä tänään";
+				$nappivari = "style = 'background-color: red';";
+			}
     }
 
 	function haeTiedot ($id, $db) {
@@ -59,10 +57,10 @@
 			$erotus = $nyt - $pvm;
 			if($erotus > 86399){
 				$_SESSION['oikeus'] = true;
-                $_SESSION['poistaKaksi'] = 2;
-                $_SESSION['ohita'] = "ok";
-                $_SESSION['lisaa20'] = "ok";
-                $_SESSION['lisaa30'] = "ok";
+				$_SESSION['poistaKaksi'] = 2;
+				$_SESSION['ohita'] = "ok";
+				$_SESSION['lisaa20'] = "ok";
+				$_SESSION['lisaa30'] = "ok";
 			} else {
 				$_SESSION['oikeus'] = false;
 			}
@@ -127,68 +125,68 @@
 	</head>
 	<body id='esBody'>
 	<script>
-			window.fbAsyncInit = function() {
-				FB.init({
-					appId      : '716388772163653',
-					cookie     : true,
-					xfbml      : true,
-					version    : 'v3.1'
-				});
-					
-				FB.getLoginStatus(function(response) {
-					if(response.status === 'connected'){
-						document.getElementById('status').innerHTML = 'Olet kirjautunut facebookiin, jatka peliin napista.'
-						var solu = document.getElementById('loginsolu');
-						solu.removeChild(document.getElementById('login'));
-						var nappi = document.createElement("button");
-						nappi.innerHTML = "Jatka peliin";
-						nappi.id = "jatka";
-						solu.appendChild(nappi);
-						nappi.addEventListener ("click", function() {
-							haeFBTiedot(kirjaudu);
-						});
-					}
-				});  
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId      : '716388772163653',
+				cookie     : true,
+				xfbml      : true,
+				version    : 'v3.1'
+			});
+				
+			FB.getLoginStatus(function(response) {
+				if(response.status === 'connected'){
+					document.getElementById('status').innerHTML = 'Olet kirjautunut facebookiin, jatka peliin napista.'
+					var solu = document.getElementById('loginsolu');
+					solu.removeChild(document.getElementById('login'));
+					var nappi = document.createElement("button");
+					nappi.innerHTML = "Jatka peliin";
+					nappi.id = "jatka";
+					solu.appendChild(nappi);
+					nappi.addEventListener ("click", function() {
+						haeFBTiedot(kirjaudu);
+					});
+				}
+			});  
+
+		};
 	
-			};
+		(function(d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = 'https://connect.facebook.net/fi_FI/sdk.js#xfbml=1&version=v2.11';
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+
+		function checkLoginState() {
+			haeFBTiedot(kirjaudu);
+		}
+
+		function haeFBTiedot(callback) {
+			FB.api('/me', 'GET', {fields: 'id, name, picture.width(200).height(200)'}, function(response) {
+				console.log('Kirjautumistiedot: ', response)
+				var posti = new FormData();
+				posti.append('id', response.id);
+				posti.append('nimi', response.name);
+				posti.append('kuva', response.picture.data.url);
+				callback(posti);
+			});
+		}
 	
-			(function(d, s, id) {
-				var js, fjs = d.getElementsByTagName(s)[0];
-				if (d.getElementById(id)) return;
-				js = d.createElement(s); js.id = id;
-				js.src = 'https://connect.facebook.net/fi_FI/sdk.js#xfbml=1&version=v2.11';
-				fjs.parentNode.insertBefore(js, fjs);
-			}(document, 'script', 'facebook-jssdk'));
-	
-			function checkLoginState() {
-				haeFBTiedot(kirjaudu);
-			}
-	
-			function haeFBTiedot(callback) {
-				FB.api('/me', 'GET', {fields: 'id, name, picture.width(200).height(200)'}, function(response) {
-					console.log('Kirjautumistiedot: ', response)
-					var posti = new FormData();
-					posti.append('id', response.id);
-					posti.append('nimi', response.name);
-					posti.append('kuva', response.picture.data.url);
-					callback(posti);
-				});
-			}
-	
-			function kirjaudu(posti){
-				var xmlHttp = new XMLHttpRequest();   
-					xmlHttp.onreadystatechange = function(posti) {
-						if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-							var viesti = xmlHttp.responseText;
-							if(viesti == "kirjautunut"){
-								location.reload(true);
-							}
+		function kirjaudu(posti){
+			var xmlHttp = new XMLHttpRequest();   
+				xmlHttp.onreadystatechange = function(posti) {
+					if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+						var viesti = xmlHttp.responseText;
+						if(viesti == "kirjautunut"){
+							location.reload(true);
 						}
 					}
-				xmlHttp.open('post', 'kirjautuminen.php'); 
-				xmlHttp.send(posti);
-			}
-		</script>
+				}
+			xmlHttp.open('post', 'kirjautuminen.php'); 
+			xmlHttp.send(posti);
+		}
+	</script>
 		<div id="ilmoitus">Ei näin päin!<br>Toimii vain vaakatasossa</div>
 		<table id='esTaulu' style="<?php echo $kirjautuminen; ?>">
 			<tr><td id='esOtsikko'>Viikkovisa</td></tr>

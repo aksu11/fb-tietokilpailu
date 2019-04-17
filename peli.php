@@ -388,7 +388,7 @@
 			}
 			$stmt = $db->query("SELECT * FROM viikon_tulokset ORDER BY pisteet DESC, aika ASC");
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			    $lista[] = $row;
+				$lista[] = $row;
 			}
 			$db->exec("TRUNCATE viikon_tulokset");
 			foreach ($lista as $rivi) {
@@ -399,30 +399,30 @@
 		$lista = array();
 		$stmt = $db->query("SELECT * FROM kaikkien_aikojen_parhaat");
 		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-		    $lista[] = $row;
+			$lista[] = $row;
 		}
 		$koko = count($lista);
 		if($koko < 100 || $lista[$koko-1][pisteet] < $pelaaja[pisteet] || ($lista[$koko-1][pisteet] == $pelaaja[pisteet] && $lista[$koko-1][aika] > $pelaaja[kokonaisaika])) {
-				$lista[$koko][id] = $_SESSION['id'];
-				$lista[$koko][nimi] = $_SESSION['nimi'];
-				$lista[$koko][kuva] = $_SESSION['kuva'];
-				$lista[$koko][pisteet] = $pelaaja[pisteet];
-				$lista[$koko][aika] = $pelaaja[kokonaisaika];
-				$lista[$koko][pvm] = $pvm;
-				$_SESSION['top100'] = true;
-				foreach ($lista as $rivi) {
-					$pisteet[] = $rivi[pisteet];
-					$aika[] = $rivi[aika];
-				}
-				array_multisort($pisteet, SORT_DESC, $aika, SORT_ASC, $lista);
-				$koko++;
-				if($koko > 100) $koko = 100;
-				$vienti = array_slice($lista, 0, $koko);
-				$db->exec("TRUNCATE kaikkien_aikojen_parhaat");
-				foreach ($vienti as $rivi) {
-					$stmt = $db->prepare("INSERT INTO kaikkien_aikojen_parhaat (id, nimi, kuva, pisteet, aika, pvm) VALUES (?, ?, ? ,?, ?, ?)");
-					$stmt->execute([$rivi[id], $rivi[nimi], $rivi[kuva], $rivi[pisteet], $rivi[aika], $rivi[pvm]]);
-				}
+			$lista[$koko][id] = $_SESSION['id'];
+			$lista[$koko][nimi] = $_SESSION['nimi'];
+			$lista[$koko][kuva] = $_SESSION['kuva'];
+			$lista[$koko][pisteet] = $pelaaja[pisteet];
+			$lista[$koko][aika] = $pelaaja[kokonaisaika];
+			$lista[$koko][pvm] = $pvm;
+			$_SESSION['top100'] = true;
+			foreach ($lista as $rivi) {
+				$pisteet[] = $rivi[pisteet];
+				$aika[] = $rivi[aika];
+			}
+			array_multisort($pisteet, SORT_DESC, $aika, SORT_ASC, $lista);
+			$koko++;
+			if($koko > 100) $koko = 100;
+			$vienti = array_slice($lista, 0, $koko);
+			$db->exec("TRUNCATE kaikkien_aikojen_parhaat");
+			foreach ($vienti as $rivi) {
+				$stmt = $db->prepare("INSERT INTO kaikkien_aikojen_parhaat (id, nimi, kuva, pisteet, aika, pvm) VALUES (?, ?, ? ,?, ?, ?)");
+				$stmt->execute([$rivi[id], $rivi[nimi], $rivi[kuva], $rivi[pisteet], $rivi[aika], $rivi[pvm]]);
+			}
 		}
 	}
 ?>

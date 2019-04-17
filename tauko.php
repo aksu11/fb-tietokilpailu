@@ -7,7 +7,6 @@
 
 <html id='osHtml'>
 	<head><meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
-		
 		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 		<link href='tyyli.css' rel='stylesheet' type='text/css'><title>Omat tiedot</title>
 		<link rel="icon" href="pollo32.png" type="image/png" sizes="32x32"/>
